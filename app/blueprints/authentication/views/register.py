@@ -1,9 +1,9 @@
 from flask.views import MethodView
 from flask import jsonify, request
 from flask import make_response, render_template
+from werkzeug.security import generate_password_hash
 from app.ext.sqlalchemy.database import db_session
 from app.blueprints.authentication.models.model import FlaskUser
-import hashlib
 
 class register(MethodView):
 
@@ -30,7 +30,7 @@ class register(MethodView):
         
         user_create = FlaskUser(
             username=username,
-            password=hashlib.md5(password.encode()).hexdigest()
+            password=generate_password_hash(password)
         )
 
         db_session.add(user_create)

@@ -39,6 +39,7 @@ def create_instance_config() -> str:
         "sqlalchemy_database_uri": sqlalchemy_database_uri
     }
 
+    filesystem.create_folder_if_not(APP_CONFIG_FILE)
     filesystem.set_file(
         APP_CONFIG_FILE,
         Template(INSTANCE_CONFIG_TEXT).substitute(variables)

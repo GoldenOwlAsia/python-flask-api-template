@@ -6,6 +6,9 @@ IS_PRODUCTION = False
 # https://flask.palletsprojects.com/en/2.2.x/api/#flask.Flask.url_map
 FLASK_STRICT_SLASHES = False
 
+# Don't send the session cookie on cross-site POSTs (basic CSRF mitigation)
+SESSION_COOKIE_SAMESITE = "Lax"
+
 # https://flask-caching.readthedocs.io/en/latest/
 CACHE_TYPE = "NullCache"
 
