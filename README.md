@@ -25,7 +25,7 @@ FLASK_SENTRY_ENABLED=false
 FLASK_SENTRY_DSN=
 ```
 - Create database by docker command: `docker run --name flask -p 5435:5432 -e POSTGRES_PASSWORD=flask -e POSTGRES_USER=flask -e POSTGRES_DB=flask -d postgres:14`
-- Turn to line 63 in `alembic.ini` file, change the value follows this structure : postgresql://POSTGRES_USER:POSTGRES_PASSWORD@POSTGRES_HOST:POSTGRES_PORT/POSTGRES_DB
+- Create `alembic.ini` (gitignored): `cp alembic.ini.example alembic.ini`. Its `sqlalchemy.url` already points at the docker database above; for any other database, change it to postgresql://POSTGRES_USER:POSTGRES_PASSWORD@POSTGRES_HOST:POSTGRES_PORT/POSTGRES_DB
 - Run migration: `alembic upgrade head`
 - Export env :
     -   `export FLASK_APP=app/app.py`

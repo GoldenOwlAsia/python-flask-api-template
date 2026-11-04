@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(.venv/bin/python -m unittest)",
+      "Bash(.venv/bin/python -m unittest *)",
+      "Bash(FLASK_SECRET_KEY=dev .venv/bin/flask --app wsgi routes)",
+      "Bash(.venv/bin/alembic -c alembic.ini.example heads)",
+      "Bash(.venv/bin/alembic -c alembic.ini.example history)",
+      "Bash(.venv/bin/alembic -c alembic.ini.example history *)",
+      "Bash(.venv/bin/alembic -c alembic.ini.example upgrade * --sql)",
+      "Bash(.venv/bin/alembic -c alembic.ini.example downgrade * --sql)",
+      "Bash(.venv/bin/alembic heads)",
+      "Bash(.venv/bin/alembic current)",
+      "Bash(.venv/bin/pip show *)",
+      "Bash(docker ps)",
+      "Bash(docker ps *)",
+      "Bash(docker start flask)",
+      "Bash(docker logs flask *)",
+      "Bash(python3 -m unittest discover -s .claude/hooks)",
+      "Bash(test -f instance/config.py && echo present || echo absent)"
+    ],
+    "ask": [
+      "Bash(.venv/bin/alembic upgrade *)",
+      "Bash(.venv/bin/alembic downgrade *)",
+      "Bash(.venv/bin/alembic stamp *)",
+      "Bash(.venv/bin/pip install *)",
+      "Bash(uv pip install *)",
+      "Bash(docker run *)",
+      "Bash(psql *)",
+      "Bash(uwsgi *)",
+      "Bash(git push *)",
+      "Edit(/requirements.txt)",
+      "Edit(/config/production.py)",
+      "Edit(/webservice.ini)",
+      "Edit(/.github/workflows/**)",
+      "Edit(/.claude/**)",
+      "Edit(/.mcp.json)"
+    ],
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(!.env.example)",
+      "Read(!.env.sample)",
+      "Read(!.env.template)",
+      "Edit(.env)",
+      "Read(/instance/**)",
+      "Edit(/instance/**)",
+      "Read(/alembic.ini)",
+      "Edit(/alembic.ini)",
+      "Bash(python configure.py)",
+      "Bash(python configure.py *)",
+      "Bash(python3 configure.py)",
+      "Bash(python3 configure.py *)",
+      "Bash(.venv/bin/python configure.py)",
+      "Bash(.venv/bin/python configure.py *)",
+      "Bash(alembic downgrade base)",
+      "Bash(.venv/bin/alembic downgrade base)",
+      "Bash(docker rm *)",
+      "Bash(docker volume rm *)",
+      "Bash(docker volume prune)",
+      "Bash(docker volume prune *)",
+      "Bash(docker system prune)",
+      "Bash(docker system prune *)",
+      "Bash(dropdb *)",
+      "Bash(git push --force)",
+      "Bash(git push --force *)",
+      "Bash(git push -f)",
+      "Bash(git push -f *)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Monitor",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard_bash.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

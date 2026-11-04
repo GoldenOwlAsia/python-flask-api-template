@@ -1,0 +1,93 @@
+{
+  "_comment": "Repo-specific rules for .claude/hooks/guard_bash.py. Patterns match one simple command from the program name on. Add a case under tests for every rule change, then run: python3 -m unittest discover -s .claude/hooks",
+  "secret_paths": [
+    "(^|/)instance(/(?!\\S*\\.example$)\\S*)?$",
+    "(^|/)alembic\\.ini$"
+  ],
+  "block": [
+    {
+      "pattern": "(^|/)python[\\d.]*\\s+(-\\S+\\s+)*(\\S*/)?configure\\.py(\\s|$)",
+      "reason": "configure.py is interactive (it waits on prompts forever) and writes SECRET_KEY. Ask the human to run it."
+    },
+    {
+      "pattern": "^(\\S*/)?configure\\.py(\\s|$)",
+      "reason": "configure.py is interactive (it waits on prompts forever) and writes SECRET_KEY. Ask the human to run it."
+    },
+    {
+      "pattern": "^(\\S*/)?docker\\s+(container\\s+)?rm\\s(.*\\s)?flask(\\s|$)",
+      "reason": "the `flask` container holds the local Postgres data."
+    }
+  ],
+  "ask": [
+    {
+      "pattern": "(^|\\s|/)alembic\\s(.*\\s)?(-c|--config)(\\s+|=)?\\S+\\s(.*\\s)?(upgrade|downgrade)(\\s|$)",
+      "unless": "\\s--sql(\\s|$)",
+      "reason": "with -c, upgrade or downgrade without --sql migrates the database named in that config (alembic.ini.example points at the docker dev database on 5435). Add --sql to preview, or ask first."
+    }
+  ],
+  "env": [],
+  "tests": {
+    "block": [
+      "cat instance/config.py",
+      "sed -n 1,20p alembic.ini",
+      "grep url alembic.ini",
+      "cp alembic.ini /tmp/alembic.ini",
+      ".venv/bin/python configure.py",
+      "python3 configure.py",
+      "./configure.py",
+      "docker rm -f flask",
+      ".venv/bin/alembic -c alembic.ini.example downgrade base",
+      "grep -rn SECRET instance/",
+      "grep -rn SECRET instance",
+      "cp -r instance /tmp/inst",
+      "tar czf /tmp/i.tgz instance",
+      "mv instance instance.bak",
+      "rm -rf instance",
+      "git add -f alembic.ini",
+      "git diff --no-index alembic.ini.example alembic.ini",
+      "uv run python configure.py",
+      "diff alembic.ini{.example,}",
+      "python3 -c 'from instance import config; print(config.SECRET_KEY)'",
+      "python3 -c 'from instance.config import SECRET_KEY; print(SECRET_KEY)'",
+      ".venv/bin/python - <<'PY'\nimport shutil\nshutil.rmtree('instance')\nPY",
+      ".venv/bin/python - <<'PY'\nimport shutil  # it's a cleanup\nshutil.rmtree('instance')\nPY",
+      "python3 - <<'EOF'\nfrom instance import config  # don't\nprint(config.SECRET_KEY)\nEOF",
+      "find . -path ./instance -o -path ./.venv -prune -o -name '*.py' -exec cat {} +",
+      "find . -not -path ./instance -name '*.py' -exec grep -n SECRET_KEY {} +",
+      "find . ! -name instance -name '*.py' -exec grep -n SECRET_KEY {} +",
+      "find . -path ./instance -prune -exec grep -rn SECRET_KEY {} +",
+      "find . \\( -path ./instance -o -name y -prune \\) -o -name '*.py' -exec grep -n SECRET_KEY {} +"
+    ],
+    "ask": [
+      ".venv/bin/alembic -c alembic.ini.example upgrade head",
+      ".venv/bin/alembic -c alembic.ini.example downgrade -1"
+    ],
+    "allow": [
+      "test -f alembic.ini && echo yes",
+      "ls instance/",
+      "git diff configure.py",
+      "git commit -m \"docs: mention .env and instance/ handling\"",
+      "cat alembic.ini.example",
+      "cp alembic.ini.example alembic.ini",
+      ".venv/bin/alembic -c alembic.ini.example heads",
+      ".venv/bin/alembic -c alembic.ini.example upgrade ef497f559ba2:028b3e3f0958 --sql",
+      ".venv/bin/alembic upgrade head",
+      ".venv/bin/python -m unittest -v",
+      "FLASK_SECRET_KEY=dev .venv/bin/flask --app wsgi routes",
+      "docker start flask",
+      "ls -la instance",
+      "cat instance/config.py.example",
+      "grep -rn instance app/app.py",
+      "cat app/instance_helpers.py",
+      ".venv/bin/alembic -c alembic.ini.example downgrade 028b3e3f0958:ef497f559ba2 --sql",
+      ".venv/bin/python - <<'PY'\nfor instance in range(3):\n    print(instance)\nPY",
+      ".venv/bin/python -c 'from app.app import create_app; print(create_app().instance_path)'",
+      "uv run --python 3.12 python -m unittest -v",
+      ".venv/bin/python - <<'PY'\n# Don't create the app twice\nfor instance in [1, 2]:\n    print(f'{instance}')\nPY",
+      "find . -path ./instance -prune -o -name '*.py' -exec grep -n SECRET_KEY {} +",
+      "find . -not -path './instance/*' -name '*.py' -exec grep -ln session {} +",
+      "find . -path ./instance -prune -o -path ./.venv -prune -o -name '*.py' -exec grep -n SECRET_KEY {} +",
+      "find . -type d -name instance -prune -o -name '*.py' -exec grep -n SECRET_KEY {} +"
+    ]
+  }
+}

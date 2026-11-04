@@ -140,3 +140,17 @@ alembic.ini
 data/
 
 .idea
+
+# AI agents: personal files, never commit
+CLAUDE.local.md
+AGENTS.override.md
+.claude/settings.local.json
+# Local env files (.env.<name>): the agent guard treats them as secrets.
+# Templates (.env.example/.sample/.template) stay committable.
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+# Everything in instance/ is local config (the agent guard treats it as secret)
+instance/*
+!instance/*.example
