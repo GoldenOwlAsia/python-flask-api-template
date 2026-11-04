@@ -87,7 +87,8 @@
       "find . -path ./instance -prune -o -name '*.py' -exec grep -n SECRET_KEY {} +",
       "find . -not -path './instance/*' -name '*.py' -exec grep -ln session {} +",
       "find . -path ./instance -prune -o -path ./.venv -prune -o -name '*.py' -exec grep -n SECRET_KEY {} +",
-      "find . -type d -name instance -prune -o -name '*.py' -exec grep -n SECRET_KEY {} +"
+      "find . -type d -name instance -prune -o -name '*.py' -exec grep -n SECRET_KEY {} +",
+      "docker inspect -f '{{json .HostConfig.PortBindings}}' flask"
     ]
   }
 }

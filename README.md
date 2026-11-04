@@ -24,7 +24,7 @@ FLASK_RUN_PORT=5000
 FLASK_SENTRY_ENABLED=false
 FLASK_SENTRY_DSN=
 ```
-- Create database by docker command: `docker run --name flask -p 5435:5432 -e POSTGRES_PASSWORD=flask -e POSTGRES_USER=flask -e POSTGRES_DB=flask -d postgres:14`
+- Create database by docker command: `docker run --name flask -p 127.0.0.1:5435:5432 -e POSTGRES_PASSWORD=flask -e POSTGRES_USER=flask -e POSTGRES_DB=flask -d postgres:14`. The `127.0.0.1:` keeps this throwaway database off your network. A `flask` container created earlier keeps its old binding, even while stopped. Check with `docker inspect -f '{{json .HostConfig.PortBindings}}' flask`: if any HostIp is not `127.0.0.1` (an empty HostIp means every interface), recreate it. `docker rm -f flask` deletes its data.
 - Create `alembic.ini` (gitignored): `cp alembic.ini.example alembic.ini`. Its `sqlalchemy.url` already points at the docker database above; for any other database, change it to postgresql://POSTGRES_USER:POSTGRES_PASSWORD@POSTGRES_HOST:POSTGRES_PORT/POSTGRES_DB
 - Run migration: `alembic upgrade head`
 - Export env :

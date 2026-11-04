@@ -4,7 +4,7 @@ description: Create, check and apply an Alembic migration for this repo's Postgr
 ---
 # Add a migration
 
-Preconditions: run from the repo root; the local Postgres is up on 5435 (`docker start flask`). If `alembic.ini` is missing, ask the human to run `cp alembic.ini.example alembic.ini`. Never write database credentials yourself, and never target a database that isn't local. Read `alembic/AGENTS.md` first.
+Preconditions: run from the repo root; the local Postgres is up on 5435, started as in the AGENTS.md Dev database line (binding check first). If `alembic.ini` is missing, ask the human to run `cp alembic.ini.example alembic.ini`. Never write database credentials yourself, and never target a database that isn't local. Read `alembic/AGENTS.md` first.
 
 1. Confirm the model is imported in `app/blueprints/models.py`.
 2. `.venv/bin/alembic -c alembic.ini.example heads` must show exactly one head. If there are two, stop and ask about a merge revision.

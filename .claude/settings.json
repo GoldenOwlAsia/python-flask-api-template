@@ -15,6 +15,7 @@
       "Bash(.venv/bin/pip show *)",
       "Bash(docker ps)",
       "Bash(docker ps *)",
+      "Bash(docker inspect -f '{{json .HostConfig.PortBindings}}' flask)",
       "Bash(docker start flask)",
       "Bash(docker logs flask *)",
       "Bash(python3 -m unittest discover -s .claude/hooks)",
